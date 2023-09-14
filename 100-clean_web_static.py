@@ -22,7 +22,9 @@ def do_clean(number=0):
         return
 
     with lcd('versions'):
-        local('ls -1t | tail -n +{} | xargs -I {{}} rm {{}}'.format(number + 1))
+        local('ls -1t | tail -n +{} | xargs -I {{}} rm {{}}'
+              .format(number + 1))
 
     with cd('/data/web_static/releases'):
-        run('ls -1t | tail -n +{} | xargs -I {{}} rm -rf {{}}'.format(number + 1))
+        run('ls -1t | tail -n +{} | xargs -I {{}} rm -rf {{}}'
+            .format(number + 1))
