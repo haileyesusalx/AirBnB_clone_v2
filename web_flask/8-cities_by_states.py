@@ -1,36 +1,32 @@
 #!/usr/bin/python3
-""" Starts a flask web application. """
+"""Starts a Flask web application.
 
-from flask import Flask, render_template
+The application listens on 0.0.0.0, port 5000.
+Routes:
+    /cities_by_states: HTML page with a list of all states and related cities.
+"""
 from models import storage
-from models.state import State
-from sqlalchemy.orm import scoped_session, sessionmaker
+from flask import Flask
+from flask import render_template
 
-# create instance of flask class and assigns it to the variable app
 app = Flask(__name__)
 
 
-# teardown app context to remove current SQLAlchemy session after each request
-@app.teardown_appcontext
-def teardown(exception):
-    """Remove current SQLALchemy session."""
-    storage.close()
-
-
-# Define the route for '/states_list'
-@app.route("/states_list", strict_slashes=False)
+@app.route("/cities_by_states", strict_slashes=False)
 def cities_by_states():
-    """ Display an HTML page with a list of all state objects in DBstorage.
-    sorted by name.
-    """
-    # Fetch all state objects from the DBstorage and sort them by name A to Z
-    states = storage.all(State)
+    """Displays an HTML page with a list of all states and related cities.
 
-    # Render the templete and pass the list of states to the template
+    States/cities are sorted by name.
+    """
+    states = storage.all("State")
     return render_template("8-cities_by_states.html", states=states)
 
 
-if __name__ == __main__:
-    # Start the flask development server
-    # Listen on all available network interfces (0.0.0.0) and port 5000
-    app.run(host='0.0.0.0', port=5000)
+@app.teardown_appcontext
+def teardown(exc):
+    """Remove the current SQLAlchemy session."""
+    storage.close()
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
